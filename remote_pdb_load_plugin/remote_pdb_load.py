@@ -59,7 +59,7 @@ class FetchPDB:
 #                filename = urllib.urlretrieve('http://www.rcsb.org/pdb/cgi/export.cgi/' +
 #                                                        pdbCode + '.pdb.gz?format=PDB&pdbId=' +
 #                                                        pdbCode + '&compression=gz')[0]
-                filename = urllib.urlretrieve('http://www.rcsb.org/pdb/files/'
+                filename = urllib.urlretrieve('http://files.rcsb.org/download/'
                                               + pdbCode + '.pdb.gz')[0]
             except:
                 tkMessageBox.showerror('Connection Error',

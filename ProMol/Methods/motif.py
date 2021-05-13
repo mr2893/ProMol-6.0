@@ -65,7 +65,7 @@ Pmw.initialise()
 def FetchPDB(id):
     pdbCode = string.upper(id)
     try:
-        filename = urllib.urlretrieve('http://www.rcsb.org/pdb/files/'
+        filename = urllib.urlretrieve('http://files.rcsb.org/download/'
                                       + pdbCode + '.pdb.gz')[0]
     except:
         print 'Connection Error', 'Can not access to the PDB database for ',\
