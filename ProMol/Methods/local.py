@@ -1,6 +1,6 @@
 from pymol import cmd
 from pymol import stored
-import Tkinter as tk
+import tkinter as tk
 import Pmw
 import os
 import re
@@ -12,10 +12,10 @@ from tkFileDialog import *
 from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
-from Tkinter import *
+from tkinter import *
 from pmg_tk.startup.treewidgets import widget, node, texttree
 from pmg_tk.startup.treewidgets.constants import *
-import Tkinter as tk
+import tkinter as tk
 import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.load_csa_lit as lib
 import pmg_tk.startup.ProMol.Methods.proutils as proutils

@@ -1,14 +1,14 @@
 '''Sets up global variables and functions'''
 from pymol import cmd
-import Tkinter as tk
-import urllib2
+import tkinter as tk
+import urllib.request, urllib.error, urllib.parse
 import os
 import math
 import time
 import linecache
 import random
 import platform
-from Tkinter import *
+from tkinter import *
 from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION, USE_JESS
 
 # The algorithm version number constant was still at 1.0, so
@@ -181,10 +181,8 @@ RNA = ("U", "I", "1MA",
 RNASTR = '+'.join(RNA)
 #A - Z
 AlphaSequence = [ "%c" % (x) for x in range(ord('A'), ord('Z')+1)]
-del x
 #a - z
 alphasequence = [ "%c" % (x) for x in range(ord('a'), ord('z')+1)]
-del x
 # The following dictionaries map atomic symbols to RGB color values
 #the original CPK plastic models developed by Corey, Pauling and Kultun
 CPKDict = {
@@ -448,7 +446,7 @@ cmd.extend('reset_motif_database', reset_motif_database)
 
 
 def reset_user_motif_database():
-    print 'user motifs reloaded'
+    print ("user motifs reloaded")
     global MOTIFS
     MOTIFS.clear() # This should still work because dictionaries have such a method
     del MOTIFS
@@ -823,14 +821,14 @@ def randompdb():
     database = []
     masterfile = None
     try:
-        masterfile = urllib2.urlopen(MASTERFILE_URL)
+        masterfile = urllib.request.urlopen(MASTERFILE_URL)
         for pdbline in masterfile:
             database.append(pdbline.split('\t')[0])
     finally:
         if (masterfile):
             masterfile.close()
     if (len(database) > 0):
-        cmd.fetch(random.choice(database), async=0, path=FETCH_PATH)
+        cmd.fetch(random.choice(database), path=FETCH_PATH)
         update()
 # Makes this functionality available from the PyMOL command line
 cmd.extend('randompdb',randompdb)

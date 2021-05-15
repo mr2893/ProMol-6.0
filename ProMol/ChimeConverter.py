@@ -41,27 +41,27 @@ class ChimeConverter:
         self.argsLength = len(self.args)
         self.command = self.args[0]
         
-        if self.command in self.rpsts.keys():
+        if self.command in list(self.rpsts.keys()):
             self.on_off_conversions()
-        elif self.command in self.coloring.keys():
+        elif self.command in list(self.coloring.keys()):
             self.coloring_conversions()
-        elif self.command in self.individuals.keys():
+        elif self.command in list(self.individuals.keys()):
             self.convert_individual()
         elif self.command == 'spin':
             self.convert_spin()
         elif self.command == 'select':
             self.convert_selections()
         else:
-            print 'Error: Chime command not recognized.'
+            print('Error: Chime command not recognized.')
 
     def on_off_conversions(self):
         '''handle on/off type commands'''
         if self.argsLength > 1 and self.args[1] == 'off':
             cmd.hide(self.rpsts[self.command], 'all')
-            print 'PyMOL: hide %s, all'%self.rpsts[self.command]
+            print('PyMOL: hide %s, all'%self.rpsts[self.command])
         else:
             cmd.show(self.rpsts[self.command], 'all')
-            print 'PyMOL: show %s, all'%self.rpsts[self.command]
+            print('PyMOL: show %s, all'%self.rpsts[self.command])
     
     def coloring_conversions(self):
         '''coloring commands'''
@@ -76,9 +76,9 @@ class ChimeConverter:
                 pymCmd = '%s, %s'%(pymCmd,currentSel)
             elif self.command == 'background':
                 cmd.bg_color(self.args[1])
-            print pymCmd
+            print(pymCmd)
         else:
-            print 'Usage: %s [color]'%s
+            print('Usage: %s [color]'%s)
     
     def convert_spin(self):
         '''spin the protein'''
@@ -91,22 +91,22 @@ class ChimeConverter:
             util.mroll(1,180,1)
             cmd.mplay()
             pymSpin = 'PyMOL: mset 1 x180; util.mroll(1,180,1); mplay'
-        print pymSpin
+        print(pymSpin)
     
     def convert_selections(self):
         '''select stuff'''
         try:
             if self.argsLength > 1:
-                print 'PyMOL: select %s'%self.selections[self.args[1]]
+                print('PyMOL: select %s'%self.selections[self.args[1]])
                 cmd.select(self.selections[self.args[1]])
             else:
-                print 'Usage: select [selection]'
+                print('Usage: select [selection]')
         except:
-            print 'Error: Chime command not supported.'
+            print('Error: Chime command not supported.')
     
     def convert_individual(self):
         '''other commands'''
         cmd.do(self.individuals[self.command])
-        print 'PyMOL: %s'%self.individuals[self.command]
+        print('PyMOL: %s'%self.individuals[self.command])
 cmd.extend('c',lambda x,y=None:CC.ChimeConverter().parse(x,y))
 cmd.extend('C',lambda x,y=None:CC.ChimeConverter().parse(x,y))

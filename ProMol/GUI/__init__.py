@@ -1,10 +1,10 @@
 '''The GUI for ProMol'''
 from pymol import cmd
-import Tkinter as tk
+import tkinter as tk
 from tkFileDialog import askopenfilename
 import Pmw
 from pmg_tk.startup.ProMol import promolglobals as glb
-from pmg_tk.startup.remote_pdb_load import FetchPDB as showFetchDialog
+from pmg_tk.startup.ProMol.remote_pdb_load import FetchPDB as showFetchDialog
 Pmw.initialise()
 
 def __init__(pymol):

@@ -28,7 +28,7 @@
 # PERFORMANCE OF THIS SOFTWARE.
 # ----------------------------------------------------------------------
 
-from Tkinter import *
+from tkinter import *
 from pymol import cmd
 
 def __init__(self):

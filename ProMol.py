@@ -27,7 +27,7 @@ import pmg_tk.startup.ProMol
 def __init__(self):
     '''If everything is installed correctly this won't run'''
     import os
-    print '\n'
+    print ("\n")
     print ('''ERROR: The folder `ProMol` that was distributed alongside
 `ProMol.py` must be installed in order for the ProMol plugin to work. 
  Please close PyMol and install the `ProMol` folder in "%s/" by copy and

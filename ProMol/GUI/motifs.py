@@ -1,5 +1,5 @@
-import Tkinter as tk
-from Tkinter import *
+import tkinter as tk
+from tkinter import *
 from ttk import *
 import Pmw
 from pmg_tk.startup.treewidgets import widget, node, texttree

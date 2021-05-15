@@ -1,4 +1,4 @@
-import Tkinter as tk
+import tkinter as tk
 import os
 from pmg_tk.startup.ProMol import promolglobals as glb
 

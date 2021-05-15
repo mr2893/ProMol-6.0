@@ -1,5 +1,5 @@
 '''The view tab'''
-import Tkinter as tk
+import tkinter as tk
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.setting import *
 from pmg_tk.startup.ProMol.Methods.visual import *

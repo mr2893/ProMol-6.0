@@ -1,5 +1,5 @@
 from pymol import cmd
-import Tkinter as tk
+import tkinter as tk
 import Pmw
 from pmg_tk.startup.ProMol import promolglobals as glb
 Pmw.initialise()
