@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import *
-from ttk import *
+from tkinter.ttk import *
 import Pmw
-from pmg_tk.startup.treewidgets import widget, node, texttree
+from pmg_tk.startup.ProMol.treewidgets import widget, node, texttree
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.motif import *
 from pmg_tk.startup.ProMol.Methods.local import *

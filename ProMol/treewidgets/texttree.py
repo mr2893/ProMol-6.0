@@ -17,10 +17,10 @@ the file LICENSE for details.
 """
 
 import string
-from Tkinter import *
-from pmg_tk.startup.treewidgets.widget import TreeWidget
-from pmg_tk.startup.treewidgets.node import TreeNode, TWTreeNode
-from pmg_tk.startup.treewidgets.constants import *
+from tkinter import *
+from pmg_tk.startup.ProMol.treewidgets.widget import TreeWidget
+from pmg_tk.startup.ProMol.treewidgets.node import TreeNode, TWTreeNode
+from pmg_tk.startup.ProMol.treewidgets.constants import *
 
 LEFT_MARGIN = 2
 INDENT_WIDTH = 16
@@ -109,7 +109,7 @@ class TextTree(TreeWidget,Text):
         #tkconfig.update({'width': TREE_WIDTH,
                          'bg': TREE_BG,'cursor':'left_ptr'})
         # doesn't work because 'icons' is in tkconfig
-        apply(Text.__init__,(self,self._frame),tkconfig)
+        Text.__init__(*(self,self._frame), **tkconfig)
 
         self._gui_setup(icons,fonts)
         

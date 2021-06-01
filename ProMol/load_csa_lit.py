@@ -1,5 +1,5 @@
 import random
-from tkFileDialog import askopenfile
+from tkinter.filedialog import askopenfile
 import os
 
 
@@ -23,7 +23,7 @@ def read_pdb_list():
         for id in data:
             pdb_list.add(id.strip(" "))
     infile.close()
-    print "\nIDs in PBD list:",len(pdb_list)
+    print("\nIDs in PBD list:",len(pdb_list))
     return pdb_list
 		
 def read_motif_definitions(pdb_list):
@@ -66,19 +66,19 @@ def read_motif_definitions(pdb_list):
         if id not in will_generate:
                 not_in_lib.append(id)
 				
-    print "Stored", len(id_motif), "motif definitions"
+    print("Stored", len(id_motif), "motif definitions")
     
     if len(will_generate) != len(pdb_list):
-        print "PDB IDs not in library (",len(not_in_lib),"):"
+        print("PDB IDs not in library (",len(not_in_lib),"):")
         out = ""
         for id in not_in_lib:
             out += id + ","
         out = out.strip(",")
-        print out + "\n"		
+        print(out + "\n")		
 
 def getPDBlist():
     pdblist = []
-    for k, v in id_ecnum.items():
+    for k, v in list(id_ecnum.items()):
 	    pdblist.append(k)
     return pdblist
 		

@@ -1,7 +1,7 @@
 from pymol import cmd
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.visual import *
-from tkMessageBox import showinfo
+from tkinter.messagebox import showinfo
 import Pmw
 Pmw.initialise()
 
@@ -447,7 +447,7 @@ def chain_pull():
 
    i = chainPullLen+2
    for h in range(2,i):
-       print 'translate %s,%s'%(coor[h],chainPullList[h-2])
+       print('translate %s,%s'%(coor[h],chainPullList[h-2]))
        cmd.mdo(h,'translate %s,%s'%(coor[h],chainPullList[h-2]))
    cmd.mdo(i,'zoom all')
    util.mroll(i+1,i+171,1)

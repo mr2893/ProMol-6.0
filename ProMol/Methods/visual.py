@@ -1,7 +1,7 @@
 from pymol import cmd, util, preset
 from pmg_tk.startup.ProMol import promolglobals as glb
-from tkColorChooser import askcolor
-from tkMessageBox import showinfo,showerror
+from tkinter.colorchooser import askcolor
+from tkinter.messagebox import showinfo,showerror
 
 def pre_surface_view(tag):
     if tag == 'Surface':

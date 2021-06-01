@@ -6,15 +6,15 @@ import os
 import re
 import time
 import math
-import tkFileDialog
+import tkinter.filedialog
 from shutil import copy
-from tkFileDialog import *
-from tkSimpleDialog import askstring
-from tkColorChooser import askcolor
-from tkMessageBox import showinfo, showerror, askyesno
+from tkinter.filedialog import *
+from tkinter.simpledialog import askstring
+from tkinter.colorchooser import askcolor
+from tkinter.messagebox import showinfo, showerror, askyesno
 from tkinter import *
-from pmg_tk.startup.treewidgets import widget, node, texttree
-from pmg_tk.startup.treewidgets.constants import *
+from pmg_tk.startup.ProMol.treewidgets import widget, node, texttree
+from pmg_tk.startup.ProMol.treewidgets.constants import *
 import tkinter as tk
 import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.load_csa_lit as lib
@@ -30,7 +30,7 @@ Pmw.initialise()
 #the custom file is added to multipdb textbox, saved to the PDBDownloads file, and read from there
 def loadlocal(): 
     last_used_dir = glb.LAST_USED_DIR
-    pdb = tkFileDialog.askopenfilename(filetypes = (("PDB files", "*.pdb"), \
+    pdb = tkinter.filedialog.askopenfilename(filetypes = (("PDB files", "*.pdb"), \
                                        ("text files", "*.txt"), \
                                        ("all files", ".*")), \
                                        initialdir = last_used_dir, \
@@ -43,7 +43,7 @@ def loadlocal():
             name = data[len(data) - 1].split(".")[0]
             #name += ', '
             glb.GUI.motifs['multipdb'].insert(END, name) 
-            print "Loaded local file " + pdb
+            print("Loaded local file " + pdb)
         except: 
             showerror("Open Source File", "Failed to read file \n'%s'"%pdb)
             return
@@ -63,7 +63,7 @@ def askopenfilename():
         fileoptions['initialfile'] = ''
         fileoptions['title'] = 'Select a file of proteins'
 
-        filename = tkFileDialog.askopenfilename(**fileoptions)
+        filename = tkinter.filedialog.askopenfilename(**fileoptions)
     
         if filename and filename is not None:
             fo = open(filename, 'r')

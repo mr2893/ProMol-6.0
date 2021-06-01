@@ -6,18 +6,18 @@ import os
 import re
 import time
 import math
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import string
 import gzip
-from tkFileDialog import asksaveasfile, askdirectory, askopenfile
-from tkSimpleDialog import askstring
-from tkColorChooser import askcolor
-from tkMessageBox import showinfo, showerror, askyesno
+from tkinter.filedialog import asksaveasfile, askdirectory, askopenfile
+from tkinter.simpledialog import askstring
+from tkinter.colorchooser import askcolor
+from tkinter.messagebox import showinfo, showerror, askyesno
 from tkinter import *
-from pmg_tk.startup.treewidgets import widget, node, texttree
-from pmg_tk.startup.treewidgets.constants import *
+from pmg_tk.startup.ProMol.treewidgets import widget, node, texttree
+from pmg_tk.startup.ProMol.treewidgets.constants import *
 import tkinter as tk
-import tkFileDialog
+import tkinter.filedialog
 import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.Methods.proutils as proutils
 import pmg_tk.startup.ProMol.Methods.motifset as motifset
@@ -65,11 +65,11 @@ Pmw.initialise()
 def FetchPDB(id):
     pdbCode = string.upper(id)
     try:
-        filename = urllib.urlretrieve('http://files.rcsb.org/download/'
+        filename = urllib.request.urlretrieve('http://files.rcsb.org/download/'
                                       + pdbCode + '.pdb.gz')[0]
     except:
-        print 'Connection Error', 'Can not access to the PDB database for ',\
-               pdbCode,'\nPlease check your Internet access.'
+        print('Connection Error', 'Can not access to the PDB database for ',\
+               pdbCode,'\nPlease check your Internet access.')
     else:
         if (os.path.getsize(filename) > 0): # If 0, then pdb code was invalid
             # Uncompress the file while reading
@@ -85,7 +85,7 @@ def FetchPDB(id):
             
             cmd.load(outputname,quiet=0) # Load the fresh pdb
         else:
-            print "Invalid PDB id ",id
+            print("Invalid PDB id ",id)
         os.remove(filename) # Remove tmp file (leave the pdb)
 
 # End of extract from remote_pdb_load.py
@@ -237,7 +237,7 @@ def MotifCaller(motif, camera=True):
         glb.deletemotif()
         glb.update()
     try:
-        if execfile(glb.MOTIFS[motif]['path']) != False:
+        if exec(compile(open(glb.MOTIFS[motif]['path'], "rb").read(), glb.MOTIFS[motif]['path'], 'exec')) != False:
             if (motif not in cmd.get_names('all')) or (cmd.count_atoms(motif) == 0):
                 raise Warning
             else:
@@ -310,8 +310,8 @@ def showContent(node):
     motifPDBCode = secondsplit[1] # tpdb
     queryPDBCode = querynode.getName()
         
-    print motifPDBCode
-    print queryPDBCode
+    print(motifPDBCode)
+    print(queryPDBCode)
     
     cmd.reinitialize()
     motifColor = glb.GUI.motifs['motifcolor']['bg']
@@ -382,23 +382,23 @@ def showContent(node):
 
             #added 2/19
             if glb.GUI.motifs['rmsd'].get() != 0:
-                print repr(data1[6]) + " residues were aligned and " + repr(data1[1]) + " atoms."
-                print "rmsd of the alignment using all atoms = " + repr(data1[0]) #added         
+                print(repr(data1[6]) + " residues were aligned and " + repr(data1[1]) + " atoms.")
+                print("rmsd of the alignment using all atoms = " + repr(data1[0])) #added         
                 #aligns and gets the rmsd of the alignment by C alpha atoms
                 cmd.select(querySubsetName, motifName+" and name ca")#added
                 cmd.select(motifSubsetName, '%s and (%s) and name %s' % (motifPDBCode,
                 glb.MOTIFS[motifName]['loci'], "ca"))#added
                 data2 = cmd.align(motifSubsetName, querySubsetName)#added
-                print repr(data2[6]) + " residues were aligned and " + repr(data2[1]) + " atoms."
-                print "rmsd of the alignment using ca atoms = " + repr(data2[0]) #added
+                print(repr(data2[6]) + " residues were aligned and " + repr(data2[1]) + " atoms.")
+                print("rmsd of the alignment using ca atoms = " + repr(data2[0])) #added
 
                 #aligns and gets the rmsd of the alignment by C alpha and C beta atoms
                 cmd.select(querySubsetName, motifName+" and name ca,cb")#edited
                 cmd.select(motifSubsetName, '%s and (%s) and name %s' % (motifPDBCode,
                 glb.MOTIFS[motifName]['loci'], "ca,cb"))#edited
                 data3 = cmd.align(motifSubsetName, querySubsetName)#edited
-                print repr(data3[6]) + " residues were aligned and " + repr(data3[1]) + " atoms."
-                print "rmsd of the alignment using ca and cb atoms = " + repr(data3[0]) #added
+                print(repr(data3[6]) + " residues were aligned and " + repr(data3[1]) + " atoms.")
+                print("rmsd of the alignment using ca and cb atoms = " + repr(data3[0])) #added
             ###
 
     
@@ -600,7 +600,7 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
 
     glb.GUI.motifs['findmotif']['state'] = tk.DISABLED
 
-    for w in glb.GUI.motifs['root'].children.values():
+    for w in list(glb.GUI.motifs['root'].children.values()):
         w.destroy()
    
     glb.GUI.motifs['var'] = IntVar()
@@ -1023,9 +1023,9 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
     setName += "_Set"
 
     # This is a Python list comprehension
-    keys = set([motifName for motifName in glb.MOTIFS.keys() if setselection(motifName)])
+    keys = set([motifName for motifName in list(glb.MOTIFS.keys()) if setselection(motifName)])
 
-    print 'keys: ',keys
+    print('keys: ',keys)
 
     #4/29 added
     glb.GUI.motifs['tt'].destroy()#removes current tree displaying past results
@@ -1052,7 +1052,7 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
         if pdb not in cmd.get_names('all') or cmd.count_atoms(pdb) == 0:
             if string.upper(pdb) not in cmd.get_names('all') or \
                 cmd.count_atoms(string.upper(pdb)) == 0:
-                print string.upper(pdb), " ***not in*** ", cmd.get_names('all')
+                print(string.upper(pdb), " ***not in*** ", cmd.get_names('all'))
                 lasto += keysL
                 glb.GUI.motifs['singlestatus'].SetProgressPercent(100)
                 glb.GUI.motifs['overallstatus'].SetProgressPercent((lasto/keysLo)*100)
@@ -1205,7 +1205,7 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
                     if len(glb.GUI.motifs['csvprep'][query][motifName]['rmsd']) > 2:
                         struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha & beta:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][2], 4))})
                 except:
-                    print "indexing error at i = ", i, ", j = ", j, ", subsection = ", subsection
+                    print("indexing error at i = ", i, ", j = ", j, ", subsection = ", subsection)
              
         if query == motif:
             numberOfResults -= 1
@@ -1361,7 +1361,7 @@ class MotifMaker:
             glb.GUI.motif_maker['file'].writelines(glb.GUI.motif_maker['motif'])
             glb.GUI.motif_maker['file'].close()                        
         else:
-            print 'No file written'
+            print('No file written')
         return True
             
     # Replaces write(close=True) with mode=1
@@ -1523,12 +1523,12 @@ class MotifMaker:
                 cmd.select(h,'resn %s'%h)
                 residuecounts[cmd.count_atoms(h)/glb.AminoHashTable[h][0]] = i
                 cmd.delete(h)
-            keys = residuecounts.keys()
+            keys = list(residuecounts.keys())
             keys.sort()
             residueorder = []
             for key in keys:
                 residueorder.append(residuecounts[key])
-            print residueorder
+            print(residueorder)
             
             # I hope this is what the order means
             # I take it residueorder[newRowIndex] = oldRowIndex
@@ -1555,7 +1555,7 @@ class MotifMaker:
     def testMotif(self):
         if self.makeMotifWrapper(self.openMotifForTesting, self.closeMotifForTesting):
             #print 'Motif {0} with {1} amino acids was run.'.format(self.name, self.numberOfAcids)
-            print 'Motif %s with %s amino acids was run.'%(self.name, self.numberOfAcids)
+            print('Motif %s with %s amino acids was run.'%(self.name, self.numberOfAcids))
             return True
         else:
             return False
@@ -1564,7 +1564,7 @@ class MotifMaker:
     def saveMotif(self):
         if self.makeMotifWrapper(self.openMotifForSaving, self.closeMotifForSaving):
             #print 'Motif {0} saved to user motifs folder with {1} amino acids.'.format(self.name, self.numberOfAcids)
-            print 'Motif %s saved to user motifs folder with %s amino acids.'%(self.name, self.numberOfAcids)
+            print('Motif %s saved to user motifs folder with %s amino acids.'%(self.name, self.numberOfAcids))
             return True
         else:
             return False
@@ -1573,7 +1573,7 @@ class MotifMaker:
     def exportMotif(self):
         if self.makeMotifWrapper(self.openMotifForExporting, self.closeMotifForExporting):
             #print 'Motif {0} exported with {1} amino acids.'.format(self.name, self.numberOfAcids)
-            print 'Motif %s exported with %s amino acids.'%(self.name, self.numberOfAcids)
+            print('Motif %s exported with %s amino acids.'%(self.name, self.numberOfAcids))
             return True
         else:
             return False
@@ -1583,8 +1583,8 @@ class MotifMaker:
         retVal = False
         try:
             retVal = self.makeMotifCore(openFunction, closeFunction)
-        except IOError, problem:
-            print problem
+        except IOError as problem:
+            print(problem)
         finally:
             if glb.GUI.motif_maker['file'] != None:
                 if not glb.GUI.motif_maker['file'].closed:

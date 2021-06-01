@@ -18,8 +18,8 @@ the file LICENSE for details.
 
 """
 
-from constants import *
-from util import warn
+from .constants import *
+from .util import warn
 from xml.dom import Node
 import sys, string, os
 
@@ -178,7 +178,7 @@ class TreeNode:
         self.treewidget.deactivateNode(self.id)
 
     def _doNothing(self, event=None):
-        print "Doing nothing."
+        print("Doing nothing.")
 
 
     ########################################################################
@@ -192,16 +192,16 @@ class TreeNode:
     def _show_props(self):
         prop_names = ("NP_NONE", "NP_ROOT", "NP_ALLOW_CHILDREN",
                       "NP_AUTOBUILD", "NP_ABSTRACT")
-        prop_names = filter(lambda name, p=self.properties: p & eval(name),
-                            prop_names)
+        prop_names = list(filter(lambda name, p=self.properties: p & eval(name),
+                            prop_names))
         return string.join(prop_names,'|')
         
     def _show_state(self):
         state_names = ("NS_NONE", "NS_VISIBLE", "NS_PENDING_SHOW",
                        "NS_PENDING_HIDE", "NS_PENDING_SHIFT", 
                        "NS_EXPANDED", "NS_HAS_CHILDREN", "NS_LOCKED")
-        state_names = filter(lambda name, s=self.state: s & eval(name),
-                             state_names)
+        state_names = list(filter(lambda name, s=self.state: s & eval(name),
+                             state_names))
         return string.join(state_names,'|')
         
 
@@ -223,9 +223,8 @@ class TreeNode:
         """Return the depth of this node in the tree (minus abstract nodes)."""
         ## Careful with this--so far depth() is only used to set the 
         ## indent, but that could change.
-        concrete_anc = filter(lambda n: ((n.properties ^ NP_ABSTRACT)
-                                         & NP_ABSTRACT),
-                              self.ancestors())
+        concrete_anc = [n for n in self.ancestors() if ((n.properties ^ NP_ABSTRACT)
+                                         & NP_ABSTRACT)]
         return len(concrete_anc)
 
     def lastInSubtree(self):
@@ -439,7 +438,7 @@ class DOMTreeNode(TreeNode):
         else:
             self.root = self
         self.id_qname = kw.get('id_qname','id')
-        apply(TreeNode.__init__,(self,treewidget,parent) + args, kw)
+        TreeNode.__init__(*(self,treewidget,parent) + args, **kw)
 
     def _set_id(self,data=None):
         qname = self.root.id_qname 
@@ -477,8 +476,8 @@ class DOMTreeNode(TreeNode):
                           ^ (NS_PENDING_SHOW | NS_VISIBLE))
         children = data.childNodes
         if not SHOW_EMPTY_TEXT_NODES:
-            children = filter(lambda n,ne=self._notEmpty,tn=self.TEXT: ne(n), 
-                              children)
+            children = list(filter(lambda n,ne=self._notEmpty,tn=self.TEXT: ne(n), 
+                              children))
         for ch in children:
             treenode = DOMTreeNode(self.treewidget,self,ch,
                                    expand_limit-1,
@@ -512,8 +511,8 @@ class FSTreeNode(TreeNode):
             node_type = 'directory'
             try:
                 children = os.listdir(data)
-                children = map(lambda f,d=data: os.path.join(d,f),
-                               children)
+                children = list(map(lambda f,d=data: os.path.join(d,f),
+                               children))
             except OSError:
                 warn("Unable to list directory '%s'" % data)
                 children = []
@@ -698,7 +697,7 @@ class CustomTreeNode(TreeNode):
         ref = refusals.get('all',refusals.get(action,refusals.get('default')))
         assert ref is not None, "Internal error: no 'refusals' dictionary available for TreeNode._refuse()!"
         if ref & ERR_FAIL:
-            raise ValueError, "This application does not support the action '%s'." % action
+            raise ValueError("This application does not support the action '%s'." % action)
         elif ref & ERR_WARN:
             warn("No handler for requested action: '%s'" % action)
             return None

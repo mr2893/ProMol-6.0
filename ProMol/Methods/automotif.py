@@ -7,16 +7,16 @@ import os
 import re
 import time
 import math
-import tkFileDialog
+import tkinter.filedialog
 from shutil import copy
-from tkFileDialog import asksaveasfile, askdirectory, askopenfile, askopenfilename
-from tkSimpleDialog import askstring
-from tkColorChooser import askcolor
-from tkMessageBox import showinfo, showerror, askyesno
+from tkinter.filedialog import asksaveasfile, askdirectory, askopenfile, askopenfilename
+from tkinter.simpledialog import askstring
+from tkinter.colorchooser import askcolor
+from tkinter.messagebox import showinfo, showerror, askyesno
 from collections import OrderedDict
 from tkinter import *
-from pmg_tk.startup.treewidgets import widget, node, texttree
-from pmg_tk.startup.treewidgets.constants import *
+from pmg_tk.startup.ProMol.treewidgets import widget, node, texttree
+from pmg_tk.startup.ProMol.treewidgets.constants import *
 import tkinter as tk
 import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.load_csa_lit as lib
@@ -80,35 +80,35 @@ class AutoMotifMaker:
         # Text file to contain information about generated motifs, i.e., motif definition,
         # backbone and tolerance parameters. The report indicates if the motif was not saved.
         # An example of the report file entry (the ">" header lines: pdb [1jms], tolerance [1.2], 
-		# number of chains on which the motif was found [1], ec code [2.7.7.31]; 
-		# subsequent lines: residue name, chain, residue number, and whether the bbn was on or off):
+        # number of chains on which the motif was found [1], ec code [2.7.7.31]; 
+        # subsequent lines: residue name, chain, residue number, and whether the bbn was on or off):
         # >	1jms	1.2	1	2.7.7.31
         # NA	A	702	Off
         # MG	A	701	Off
         # ASP	A	434	On		
         reportfile = open(glb.pathmaker(('report','.txt'),root=glb.AUTOMOTIFSFOLDER), 'w')
         
-		# List of PDB IDs for which the program will attempt to generate auto motifs:
+        # List of PDB IDs for which the program will attempt to generate auto motifs:
         pdblist = lib.getPDBlist()
-		
-		# Auto generate the motifs for for the pdb id list 
+        
+        # Auto generate the motifs for for the pdb id list 
         self.autoGenerate(pdblist, reportfile)
         reportfile.close()
 
         cmd.window('show')
-        print ' ...done :)'
+        print(' ...done :)')
     
-	# A function that tells id the residue is a metal ion
+    # A function that tells id the residue is a metal ion
     def isMetal(self, res):
         metals = ('MG','ZN','MN','NA','HEM','CO','NI','FE','CU')
         if res in metals:
             return True
         else:
             return False		
-	
-	# This is the main function here, calls all others. It loads the motifs from the library,
-	# orders the residue in the order of decreasing pairwise distance and calls the motif testing
-	# and saving functions which were borrowed from motif.py module.  
+    
+    # This is the main function here, calls all others. It loads the motifs from the library,
+    # orders the residue in the order of decreasing pairwise distance and calls the motif testing
+    # and saving functions which were borrowed from motif.py module.  
     def autoGenerate(self, pdblist, reportfile):
 
         pdblistlen = len(pdblist)
@@ -125,33 +125,33 @@ class AutoMotifMaker:
                 ecnum = '7.0.0.0' ### a fictional EC number
             
             if ecnum != 'N/A':
-                print ' Generating motif ',i+1,' of ',pdblistlen,' on ',id
+                print(' Generating motif ',i+1,' of ',pdblistlen,' on ',id)
                 glb.GUI.motif_maker['pdb'].delete(0, END)
                 glb.GUI.motif_maker['pdb'].insert(END, id)
-                print ' Acquiring library information...'
+                print(' Acquiring library information...')
                 self.getLibraryMotif()
                 
                 ### motif maker on self
-                print ' Testing motif on ',id,' ...' 
+                print(' Testing motif on ',id,' ...') 
                 self.testAutoMotif()
                 motif = lib.getMotif(id)
-				
+                
                 for res in motif:
                     resn = res[0]
                     resi = res[1]
                     resstr = resn + ' ' + resi
                     motifstr.append(resstr)
                 
-                print 'Motif String: ',str(motifstr)
+                print('Motif String: ',str(motifstr))
                 
-				### a section of PDB file describing the matching subset:
+                ### a section of PDB file describing the matching subset:
                 pdbstr = cmd.get_pdbstr('matching_subset')
-				
-				### a string representation of the matching subset to be compared to the
-				### string representation of the motif:
+                
+                ### a string representation of the matching subset to be compared to the
+                ### string representation of the motif:
                 msstr = self.process_pdbstr(pdbstr)
-				
-				### number of chains in the matching subset:
+                
+                ### number of chains in the matching subset:
                 numchains = 1
                 
                 ### have to have this in the try block to skip through CmdException
@@ -160,15 +160,15 @@ class AutoMotifMaker:
                 ### structure, as 1oux is superseded by 1r51
                 try:
                     numchains = len(cmd.get_chains(id))
-                    print ' Number of chains obtained: ',str(numchains)
+                    print(' Number of chains obtained: ',str(numchains))
                 except CmdException:
                     reportfile.write('>' + '\t' + id + '\t'+ 'not saved, CmdException' + '\n')
-                    print "Can't get the number of chains ... :("
+                    print("Can't get the number of chains ... :(")
                 
                 match = self.check_match(msstr, motifstr, numchains)
                     
                 if match:
-                    print ' Writing report file and saving motif...'
+                    print(' Writing report file and saving motif...')
                     self.saveAutoMotif()
                     self.write_report(reportfile, id, numchains, len(motif))
                     saved = True
@@ -182,27 +182,27 @@ class AutoMotifMaker:
                     
                     ### now we're going to turn all the backbones on and see if it make any difference
                 
-                    print ' Motif and matching subset are not equal, motif not saved...'
-                    print ' Turning backbones on for all residues, except metal ions...'
+                    print(' Motif and matching subset are not equal, motif not saved...')
+                    print(' Turning backbones on for all residues, except metal ions...')
                     
                     for i in range(0, len(motif)):
                         if not self.isMetal(motif[i][0]):
                             glb.GUI.motif_maker['backbone'][i+1].delete(0, END)
                             glb.GUI.motif_maker['backbone'][i+1].insert(0, 'On')
                 
-                    print ' Retesting motif on ',id,' after turning all backbones on...'
+                    print(' Retesting motif on ',id,' after turning all backbones on...')
                     self.testAutoMotif()
                 
                     pdbstr_bbnon = cmd.get_pdbstr('matching_subset')
                     msstr_bbnon = self.process_pdbstr(pdbstr_bbnon)
                     
-					### check if the matching subset is equal to the motif definition
+                    ### check if the matching subset is equal to the motif definition
                     match = self.check_match(msstr_bbnon, motifstr, numchains)
                     
                     if match:
                 
-                        print ' Motif and matching subset are equal after including backbone...'
-                        print ' Writing report file and saving motif...'
+                        print(' Motif and matching subset are equal after including backbone...')
+                        print(' Writing report file and saving motif...')
                         self.write_report(reportfile, id, numchains, len(motif))
                         self.saveAutoMotif()
                         saved = True
@@ -212,7 +212,7 @@ class AutoMotifMaker:
                         ### apparently the backbone atoms did not help, leave them on and start lowering tolerance
                         ### the first thing to do here is to see if it'll make any difference at all
                         
-                        print ' Motif not saved after including backbone, try lowering tolerance...'    
+                        print(' Motif not saved after including backbone, try lowering tolerance...')    
                         
                         ### this block will lower the tolerance to the minimum and see if we have a chance of equating
                         ### matching subset to the catalytic site
@@ -223,17 +223,17 @@ class AutoMotifMaker:
                         pdbstr_tol_test = cmd.get_pdbstr('matching_subset')
                         #print pdbstr_tol_test
                         msstr_tol_test = self.process_pdbstr(pdbstr_tol_test)
-                        print "msstr: ", msstr_tol_test
-                        print "motifstr: ", motifstr
+                        print("msstr: ", msstr_tol_test)
+                        print("motifstr: ", motifstr)
                         worthit = False
                         if len(msstr_tol_test) < len(msstr_bbnon):
-						    ### check if the matching subset is equal to the motif definition
+                            ### check if the matching subset is equal to the motif definition
                             match = self.check_match(msstr_tol_test, motifstr, numchains)
                             if match:
                                 worthit = True
-                                print ' Lowering tolerance should work...'
+                                print(' Lowering tolerance should work...')
                             else:
-                                print ' Lowering tolerance will not work, motif will not be saved...'                            
+                                print(' Lowering tolerance will not work, motif will not be saved...')                            
                         
                         if worthit:
                             decrement = 0.1
@@ -244,7 +244,7 @@ class AutoMotifMaker:
                                 glb.GUI.motif_maker['pf'].delete(0,tk.END)
                                 glb.GUI.motif_maker['pf'].insert(0,str(tolerance))
                             
-                                print ' Retesting motif with backbones on and tolerance of ',str(tolerance) 
+                                print(' Retesting motif with backbones on and tolerance of ',str(tolerance)) 
                             
                                 self.testAutoMotif()
 
@@ -252,14 +252,14 @@ class AutoMotifMaker:
                                 msstr_tol = self.process_pdbstr(pdbstr_tol)
                                 
                                 if len(msstr_tol) < len(msstr_bbnon):
-                                    print ' It is now better than it was, checking if there is a match...'
+                                    print(' It is now better than it was, checking if there is a match...')
 
-									### check if the matching subset is equal to the motif definition
+                                    ### check if the matching subset is equal to the motif definition
                                     match = self.check_match(msstr_tol, motifstr, numchains)                        
                 
                                     if match:
-                                        print ' Motif and matching subset are equal after lowering tolerance...'
-                                        print ' Writing report file and saving motif...'
+                                        print(' Motif and matching subset are equal after lowering tolerance...')
+                                        print(' Writing report file and saving motif...')
                                         self.write_report(reportfile, id, numchains, len(motif))
                                         self.saveAutoMotif()
                                         saved = True
@@ -314,7 +314,7 @@ class AutoMotifMaker:
     def process_pdbstr(self, pdbstr):
         msstr = []
         lines = pdbstr.split('\n')
-        print str(len(lines)), 'lines in pdbstr'
+        print(str(len(lines)), 'lines in pdbstr')
         
         for line in lines:
             if line.startswith('ATOM') or line.startswith('HETATM'):
@@ -341,9 +341,9 @@ class AutoMotifMaker:
         ecnum = lib.getEcNumber(pdb_id)
         
         if ecnum.startswith('0'):
-            print 'ecnum: ',ecnum
+            print('ecnum: ',ecnum)
             ecnum = '7.0.0.0'
-            print 'ecnum: ',ecnum
+            print('ecnum: ',ecnum)
         
         glb.GUI.motif_maker['ec'].insert(END, ecnum)
         
@@ -353,7 +353,7 @@ class AutoMotifMaker:
                 return False
             chain = lib.getChain(pdb_id)
             
-			# we will not do it for metal ion motifs
+            # we will not do it for metal ion motifs
             do_order = True
             for res in motif:
                 if not self.isMetal(res[0]):
@@ -408,10 +408,10 @@ class AutoMotifMaker:
                     if res_1[0] == 'GLY':
                         atom_1 = 'CA'
                     elif self.isMetal(res_1[0]):
-						atom_1 = res_1[0]
+                        atom_1 = res_1[0]
                     else:
                         atom_1 = 'CB'
-						
+                        
                     if res_2[0] == 'GLY':
                         atom_2 = 'CA'
                     elif self.isMetal(res_2[0]):
@@ -420,18 +420,18 @@ class AutoMotifMaker:
                         atom_2 = 'CB'
                     
                     cmd.reinitialize()               
-                    cmd.fetch(id, async=0, path=glb.FETCH_PATH)
+                    cmd.fetch(id, path=glb.FETCH_PATH)
                     dstr = chain+'/'+res_1[1]+'/'+atom_1 + ' and ' + chain+'/'+res_2[1]+'/'+atom_2
                     try:
                         d = cmd.get_distance(chain+'/'+res_1[1]+'/'+atom_1, chain+'/'+res_2[1]+'/'+atom_2)
                         distDict.update({res_1[1] + '_' + res_2[1]: d})
                     except CmdException:
-                        print "Can't calculate distance between ",dstr," ... :("
+                        print("Can't calculate distance between ",dstr," ... :(")
 
-        orderedDistDict = OrderedDict(sorted(distDict.items(), key=lambda x: x[1]))
+        orderedDistDict = OrderedDict(sorted(list(distDict.items()), key=lambda x: x[1]))
         return orderedDistDict
     
-	# This function is very messy
+    # This function is very messy
     def orderByDistance(self, motif, id):
         ordMotif = []
         distDict = {}
@@ -449,7 +449,7 @@ class AutoMotifMaker:
             return motif
         
         resipairs = []
-        for k, v in orderedDistDict.items():
+        for k, v in list(orderedDistDict.items()):
             resipairs.append(k)
         
         pair_1 = resipairs[0]
@@ -459,7 +459,7 @@ class AutoMotifMaker:
         maybenext = []
         sofar = []
         
-        for k, v in orderedDistDict.items():
+        for k, v in list(orderedDistDict.items()):
             if ((pair_1 != k) and (pair_2 != k)):
                 if (k.split('_')[0] == pair_1.split('_')[1]):
                     d_1 = v
@@ -482,7 +482,7 @@ class AutoMotifMaker:
             sofar.append(pair_2.split('_')[1])
             sofar.append(nextpair.split('_')[1])
 
-        for k, v in orderedDistDict.items():
+        for k, v in list(orderedDistDict.items()):
             if (len(sofar) != len(resilist)):
                 if k.split('_')[1] not in sofar: 
                     sofar.append(k.split('_')[1])                
@@ -552,7 +552,7 @@ class AutoMotifMaker:
     def closeAutoMotifForTesting(self):
         if glb.GUI.motif_maker['radio'].get() == 1:
             cmd.reinitialize()
-            cmd.fetch(glb.GUI.motif_maker['testpdb'].get(), async=0, path=glb.FETCH_PATH)
+            cmd.fetch(glb.GUI.motif_maker['testpdb'].get(), path=glb.FETCH_PATH)
             glb.update()
         elif glb.GUI.motif_maker['radio'].get() == 2:
             glb.randompdb()
@@ -575,7 +575,7 @@ class AutoMotifMaker:
             glb.GUI.motif_maker['file'].writelines(glb.GUI.motif_maker['motif'])
             glb.GUI.motif_maker['file'].close()                        
         else:
-            print 'No file written'
+            print('No file written')
         return True
         
     def closeAutoMotifForSaving(self):
@@ -623,7 +623,7 @@ class AutoMotifMaker:
     # Returns false if input was bad
     def validateInput(self):
     
-        cmd.fetch(self.pdb, async=0, path=glb.FETCH_PATH)
+        cmd.fetch(self.pdb, path=glb.FETCH_PATH)
         if (self.pdb not in cmd.get_names('all')) or (cmd.count_atoms(self.pdb) == 0):
             #self.exceptions += 'Could not fetch {0}'.format(self.pdb)
             self.exceptions += 'Could not fetch %s'%(self.pdb)
@@ -689,7 +689,7 @@ class AutoMotifMaker:
         #print 'Testing motif from AutoMotifMaker'
         if self.makeAutoMotifWrapper(self.openAutoMotifForTesting, self.closeAutoMotifForTesting):
             #print 'Motif {0} with {1} amino acids was run.'.format(self.name, self.numberOfAcids)
-            print 'Motif %s with %s amino acids was run.'%(self.name, self.numberOfAcids)
+            print('Motif %s with %s amino acids was run.'%(self.name, self.numberOfAcids))
             return True
         else:
             return False
@@ -697,7 +697,7 @@ class AutoMotifMaker:
     def saveAutoMotif(self):
         if self.makeAutoMotifWrapper(self.openAutoMotifForSaving, self.closeAutoMotifForSaving):
             #print 'Motif {0} saved to user motifs folder with {1} amino acids.'.format(self.name, self.numberOfAcids)
-            print 'Motif %s saved to user motifs folder with %s amino acids.'%(self.name, self.numberOfAcids)
+            print('Motif %s saved to user motifs folder with %s amino acids.'%(self.name, self.numberOfAcids))
             return True
         else:
             return False
@@ -707,8 +707,8 @@ class AutoMotifMaker:
         retVal = False
         try:
             retVal = self.makeAutoMotifCore(openFunction, closeFunction)
-        except IOError, problem:
-            print problem
+        except IOError as problem:
+            print(problem)
         finally:
             if glb.GUI.motif_maker['file'] != None:
                 if not glb.GUI.motif_maker['file'].closed:
@@ -813,8 +813,8 @@ class AutoMotifMaker:
                                 ### r is set by the get_distance above.
                                 g = '%.2f' %(float(r) + float(self.pf))
                             except CmdException:
-                                print 'CmdException handled in makeMotifCore ... '
-                                print rstr
+                                print('CmdException handled in makeMotifCore ... ')
+                                print(rstr)
                             
                             a += 1
                             

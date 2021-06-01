@@ -17,11 +17,11 @@ the file LICENSE for details.
 
 """
 
-from Tkinter import *
-import tkFont, os
-from constants import *
-from pmg_tk.startup.treewidgets.node import TWTreeNode, DOMTreeNode, FSTreeNode, CustomTreeNode
-from util import warn
+from tkinter import *
+import tkinter.font, os
+from .constants import *
+from pmg_tk.startup.ProMol.treewidgets.node import TWTreeNode, DOMTreeNode, FSTreeNode, CustomTreeNode
+from .util import warn
 
 FONTS = {'all': {'family': ['helvetica','arial','geneva','swiss'], 'size': 11}}
 #NORMAL_FG = 'black'
@@ -122,8 +122,8 @@ class TreeWidget:
     def _mkfonts(self, fontmap=None):
         fontmap = fontmap or FONTS
         fonts = {}
-        families = tkFont.families()
-        for key, desc in fontmap.items():
+        families = tkinter.font.families()
+        for key, desc in list(fontmap.items()):
             fs = desc.get('family')
             
             for f in fs:
@@ -133,7 +133,7 @@ class TreeWidget:
                 break
             else:
                 del desc['family']
-            fonts[key] = apply(tkFont.Font,(),desc)
+            fonts[key] = tkinter.font.Font(*(), **desc)
             
         return fonts
 
@@ -149,7 +149,7 @@ class TreeWidget:
         try: del iconmap['type']
         except: pass
         if path is not None:
-            for key, files in iconmap.items():
+            for key, files in list(iconmap.items()):
                 icons = []
                 for f in files:
                     f = os.path.join(path, f)
@@ -162,12 +162,12 @@ class TreeWidget:
                     elif type == 'photo':
                         i = PhotoImage(file=f)
                     else:
-                        raise ValueError, "Unknown icon type '%s'."
+                        raise ValueError("Unknown icon type '%s'.")
                     icons.append(i)
                 all_icons[key] = icons
         if not all_icons:
-            from pmg_tk.startup.treewidgets.icons import photo_data, bitmap_data
-            for key, names in iconmap.items():
+            from pmg_tk.startup.ProMol.treewidgets.icons import photo_data, bitmap_data
+            for key, names in list(iconmap.items()):
                 icons = []
                 for n in names:
                     if type == 'bitmap':
@@ -175,7 +175,7 @@ class TreeWidget:
                     elif type == 'photo':
                         i = PhotoImage(data=photo_data[n])
                     else:
-                        raise ValueError, "Unknown icon type '%s'."
+                        raise ValueError("Unknown icon type '%s'.")
                     icons.append(i)
                 all_icons[key] = icons
         return all_icons
@@ -234,21 +234,21 @@ class TreeWidget:
 
     def pack(self, *args, **kw):
         """Override the Tkinter pack() method."""
-        apply(self._frame.pack, args, kw)
+        self._frame.pack(*args, **kw)
     def pack_forget(self):
         """Override the Tkinter pack_forget() method."""
         self._frame.pack_forget()
 
     def grid(self, *args, **kw):
         """Override the Tkinter grid() method."""
-        apply(self._frame.grid, args, kw)
+        self._frame.grid(*args, **kw)
     def grid_forget(self):
         """Override the Tkinter grid_forget() method."""
         self._frame.grid_forget()
 
     def place(self, *args, **kw):
         """Override the Tkinter place() method."""
-        apply(self._frame.place, args, kw)
+        self._frame.place(*args, **kw)
     def place_forget(self):
         """Override the Tkinter place_forget() method."""
         self._frame.place_forget()
@@ -287,10 +287,10 @@ class TreeWidget:
 
     def getNodeByID(self, node_id):
         """Return the node having a given ID."""
-        nodelist = filter(lambda n, id=node_id: n.id == id, self.all_nodes)
+        nodelist = list(filter(lambda n, id=node_id: n.id == id, self.all_nodes))
         if len(nodelist) > 1:
-            raise RuntimeError, "Apparently two or more nodes have the \
-                                 ID '%s'. That shouldn't happen." % node_id
+            raise RuntimeError("Apparently two or more nodes have the \
+                                 ID '%s'. That shouldn't happen." % node_id)
         elif len(nodelist) == 1:
             result = nodelist[0]
         else:
@@ -354,15 +354,15 @@ class TreeWidget:
         treeargs = (self,None,data,expand_limit,
                     props, state, node_funcs)
         if datatype == DT_XMLDOM:
-            apply(DOMTreeNode,treeargs)
+            DOMTreeNode(*treeargs)
         elif datatype == DT_FILESYSTEM:
-            apply(FSTreeNode,treeargs)
+            FSTreeNode(*treeargs)
         elif datatype == DT_TWSTRUCT:
-            apply(TWTreeNode,treeargs)
+            TWTreeNode(*treeargs)
         elif datatype == DT_CUSTOM:
-            apply(CustomTreeNode,treeargs)
+            CustomTreeNode(*treeargs)
         else:
-            raise ValueError, "TreeWidget.showTree requires a datatype flag."
+            raise ValueError("TreeWidget.showTree requires a datatype flag.")
         self.redisplay()
 
     def redisplay(self):
@@ -387,32 +387,27 @@ class TreeWidget:
         self.all_nodes.insert(idx+1,newnode)
         
     def scheduleShiftFollowing(self, node):
-        nodes2shift = filter(lambda n: n.state & NS_VISIBLE,
-                             self.nodesFollowing(node))
+        nodes2shift = [n for n in self.nodesFollowing(node) if n.state & NS_VISIBLE]
         for n in nodes2shift:
             n.state = n.state | NS_PENDING_SHIFT
         
     def hideNodes(self):
-        nodes = filter(lambda n: (n.state & NS_VISIBLE and 
-                                  n.state & NS_PENDING_HIDE),
-                       self.all_nodes)
+        nodes = [n for n in self.all_nodes if (n.state & NS_VISIBLE and 
+                                  n.state & NS_PENDING_HIDE)]
         for n in nodes:
             self.hideNode(n)
 
     def hideNodes4Shift(self):
-        nodes = filter(lambda n: (n.state & NS_VISIBLE and
-                                  n.state & NS_PENDING_SHIFT),
-                       self.all_nodes)
+        nodes = [n for n in self.all_nodes if (n.state & NS_VISIBLE and
+                                  n.state & NS_PENDING_SHIFT)]
         for n in nodes:
             self.hideNode(n)
             n.state = n.state | NS_PENDING_SHOW
 
     def showNodes(self):
-        nodes = filter(lambda n: n.state & NS_PENDING_SHOW,
-                       self.all_nodes)
+        nodes = [n for n in self.all_nodes if n.state & NS_PENDING_SHOW]
         if nodes:
-            start = len(filter(lambda n: n.state & NS_VISIBLE,
-                               self.nodesPreceding(nodes[0])))
+            start = len([n for n in self.nodesPreceding(nodes[0]) if n.state & NS_VISIBLE])
             for i in range(len(nodes)):
                 self.showNode(nodes[i],start+i)
         
@@ -436,7 +431,7 @@ class TreeWidget:
     def goNext(self, node):
         ##print "node: %s" % node.id
         try:
-            vis = filter(lambda n: n.state & NS_VISIBLE, self.all_nodes)
+            vis = [n for n in self.all_nodes if n.state & NS_VISIBLE]
             if node is vis[-1]:
                 next = vis[0]
             else:
@@ -450,7 +445,7 @@ class TreeWidget:
     def goPrevious(self, node):
         ##print "node: %s" % node.id
         try:
-            vis = filter(lambda n: n.state & NS_VISIBLE, self.all_nodes)
+            vis = [n for n in self.all_nodes if n.state & NS_VISIBLE]
             if node is vis[0]:
                 prev = vis[-1]
             else:
