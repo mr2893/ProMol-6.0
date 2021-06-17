@@ -63,7 +63,7 @@ Pmw.initialise()
 
 
 def FetchPDB(id):
-    pdbCode = string.upper(id)
+    pdbCode = id
     try:
         filename = urllib.request.urlretrieve('http://files.rcsb.org/download/'
                                       + pdbCode + '.pdb.gz')[0]
@@ -73,11 +73,11 @@ def FetchPDB(id):
     else:
         if (os.path.getsize(filename) > 0): # If 0, then pdb code was invalid
             # Uncompress the file while reading
-            fpin = gzip.open(filename)
+            fpin = gzip.open(filename, 'rt')
             
             # Form the pdb output name
             outputname = os.path.dirname(filename) + os.sep + pdbCode + '.pdb'
-            fpout = open(outputname, 'w')
+            fpout = open(outputname, 'wt')
             fpout.write(fpin.read()) # Write pdb file
             
             fpin.close()
@@ -309,6 +309,7 @@ def showContent(node):
         return
     motifPDBCode = secondsplit[1] # tpdb
     queryPDBCode = querynode.getName()
+    queryPDBCode = queryPDBCode.upper()
         
     print(motifPDBCode)
     print(queryPDBCode)
