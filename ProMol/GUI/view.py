@@ -178,3 +178,6 @@ def initialise():
     glb.GUI.view['asca'].set(.25)
     tk.Button(group, text='Update', command=ambient_update,
         width=10).grid(row=0, column=2, padx=0, pady=0, sticky=tk.SW)
+    #--------Explanation Message---------#
+    tk.Label(glb.GUI.view['tab'], text='The default viewing option is set to Cartoon.\nIf you wish to change Spheres or Sticks, \nthen make sure under the EZ-Viz tab that the \ndrop down menu for Surfaces has the correct\n option selected (i.e Surface on Spheres \nor Surface on Sticks, etc)').grid(row=5, column=0,
+        sticky=tk.SW)
