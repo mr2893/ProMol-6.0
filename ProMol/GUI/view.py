@@ -8,21 +8,21 @@ def initialise():
     '''Start the view tab'''
 
     #-------------- Selection Dropdown -----------------
-    tk.Label(glb.GUI.view['tab'], text='Select:').grid(row=0, column=0,
-        sticky=tk.NE)
+    tk.Label(glb.GUI.view['tab'], text='Select:').grid(row=0, column=0, padx=10,
+        sticky=tk.NW)
     glb.GUI.view['advanced_selection'] = tk.StringVar()
     glb.GUI.view['advanced_selection'].set('All')
     glb.GUI.view['advanced_selection_menu'] = tk.OptionMenu(glb.GUI.view['tab'],
         glb.GUI.view['advanced_selection'], 'All', 'Selected',
         'Not Selected', command=glb.set_selection)
-    glb.GUI.view['advanced_selection_menu'].grid(row=0, column=1, sticky=tk.NW)
+    glb.GUI.view['advanced_selection_menu'].grid(row=0, column=0, padx=50, sticky=tk.NW)
     
     tk.Button(glb.GUI.view['tab'], text='Update Selection',
-        command=glb.populate).grid(row=0, column=2, sticky=tk.E)
+        command=glb.populate).grid(row=0, column=0, sticky=tk.E)
 
     #--------------- Setting Defaults -----------------
     tk.Label(glb.GUI.view['tab'], text='Reset:').grid(row=0, column=4,
-        sticky=tk.NE)
+        sticky=tk.NW)
     defaults = tk.StringVar()
     defaults.set('Cartoon')
     defaults_menu = tk.OptionMenu(glb.GUI.view['tab'], defaults,

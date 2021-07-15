@@ -245,6 +245,38 @@ We believe it no longer applies to anything in ProMOL.
 =========================================================================
 
 Change log:
+Revision 372
+Modified Wednesday, July 14, 2021 by Mariah Robertson
+-Added an explanation to the View Options tab at the bottom (view.py)
+
+Revision 371
+Modified Wednesday, June 16, 2021 by Mariah Robertson
+-more 2to3 conversion
+-Fetch button = fixed upper() function (remote_pdb_load.py)
+-Fetch button = fixed opening/writing function to a file by specifying it as text instead of binary
+-Testing Motif Finder (Test Button) = moved upper() out of FetchPDB function.
+-motif.py changed write() to specify string not byte
+
+Revision 370
+Modified Saturday, June 1, 2021 by Mariah Robertson
+-moved treewidget folder inside ProMol
+-updated import path files
+-updated files to python 3
+-removed async=0 parameter in multiple files
+
+Revision 369
+Modified Saturday, May 15, 2021 by Mariah Robertson
+All file changes:
+-changed Tkinter to tkinter
+promolglobals.py changes:
+-2to3 Python
+-removed async=0 (pymol made it the default value)
+-removed del x (optimization - list comprehension is enough)
+-Moved remote_pdb_load to into ProMol folder for easier loading into PyMol
+
+Revision 368
+Modified Thursday, May 13, 2021 by Mariah Robertson
+-Updated the api fetch url
 
 Revision 367
 Modified Thursday, July 31, 2014 by Herbert J. Bernstein
