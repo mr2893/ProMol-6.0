@@ -821,12 +821,12 @@ def randompdb():
     database = []
     masterfile = None
     try:
-        masterfile = urllib.request.urlopen(MASTERFILE_URL)
+        masterfile = urllib.request.urlopen(MASTERFILE_URL).read().decode('utf-8')
         for pdbline in masterfile:
             database.append(pdbline.split('\t')[0])
     finally:
         if (masterfile):
-            masterfile.close()
+            urllib.request.urlopen(MASTERFILE_URL).close()
     if (len(database) > 0):
         cmd.fetch(random.choice(database), path=FETCH_PATH)
         update()
