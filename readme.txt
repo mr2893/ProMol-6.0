@@ -11,6 +11,9 @@ Based on Maddy's and Mario Rosa's versions
 5.3-r367 by the SBEVSL team, see the User's Guide
 Thursday, 31 July 2014 -- HJB
 
+6.0 by Mariah Robertson
+Tuesday, 3 August 2021
+
 Special Thanks to the following for their contributions to ProMOL:
 Laura Grell, Chris Parkin, T.J. Esposito, C. Wischmeyer
    
